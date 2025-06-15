@@ -1,0 +1,157 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>🔥 Coin Clicker Deluxe+</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            text-align: center;
+            margin: 40px;
+            background: linear-gradient(to right, #ff416c, #ff4b2b);
+            color: #fff;
+            overflow: hidden;
+        }
+        h1 {
+            font-size: 3.2em;
+            margin-bottom: 10px;
+            text-shadow: 3px 3px 6px #000;
+        }
+        #coinDisplay, #highScore {
+            font-size: 2em;
+            margin: 15px;
+            font-weight: bold;
+        }
+        button {
+            font-size: 1.3em;
+            padding: 15px 30px;
+            margin: 12px;
+            border: none;
+            border-radius: 10px;
+            background: #ffd700;
+            color: #222;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: transform 0.1s, box-shadow 0.2s;
+        }
+        button:hover {
+            transform: scale(1.07);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
+        #clickAnimation {
+            position: absolute;
+            font-size: 2.2em;
+            color: #ffff33;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.8s ease-out;
+        }
+        #controls {
+            margin: 20px;
+        }
+        #ad-placeholder {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            font-size: 1em;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔥 Coin Clicker Deluxe+</h1>
+    <div id="coinDisplay">Coins: 0</div>
+    <div id="highScore">🏆 High Score: 0</div>
+
+    <div id="controls">
+        <button onclick="clickCoin()">💰 Click Me!</button>
+        <button onclick="buyUpgrade()">⬆️ Upgrade (50 Coins)</button>
+        <button onclick="toggleSound()">🔈 Toggle Sound</button>
+    </div>
+
+    <div id="clickAnimation">+1</div>
+
+    <div id="ad-placeholder">
+        💖 Enjoying the game? <br>
+        <a href="https://paypal.me/YourUsername" target="_blank" style="color: #fff; text-decoration: underline;">
+            Leave a Tip via PayPal
+        </a>
+    </div>
+
+    <!-- Sound Effects -->
+    <audio id="clickSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_7b6cb18cd7.mp3?filename=coin-flip-19936.mp3" preload="auto"></audio>
+    <audio id="upgradeSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_3d003efb7f.mp3?filename=notification-19943.mp3" preload="auto"></audio>
+
+    <script>
+        let coins = 0;
+        let coinsPerSecond = 1;
+        let upgradeCost = 50;
+        let soundOn = true;
+
+        const coinDisplay = document.getElementById('coinDisplay');
+        const highScoreDisplay = document.getElementById('highScore');
+        const clickAnimation = document.getElementById('clickAnimation');
+        const clickSound = document.getElementById('clickSound');
+        const upgradeSound = document.getElementById('upgradeSound');
+
+        let highScore = localStorage.getItem('highScore') || 0;
+        highScoreDisplay.textContent = '🏆 High Score: ' + highScore;
+
+        function updateDisplay() {
+            coinDisplay.textContent = 'Coins: ' + coins;
+            if (coins > highScore) {
+                highScore = coins;
+                localStorage.setItem('highScore', highScore);
+                highScoreDisplay.textContent = '🏆 High Score: ' + highScore;
+            }
+        }
+
+        function showClickAnimation() {
+            clickAnimation.style.left = (Math.random() * window.innerWidth * 0.6 + 100) + 'px';
+            clickAnimation.style.top = (Math.random() * window.innerHeight * 0.4 + 100) + 'px';
+            clickAnimation.style.opacity = 1;
+            clickAnimation.style.transform = 'translateY(-30px)';
+            setTimeout(() => {
+                clickAnimation.style.opacity = 0;
+                clickAnimation.style.transform = 'translateY(0)';
+            }, 800);
+        }
+
+        function clickCoin() {
+            coins += 1;
+            if (soundOn) {
+                clickSound.currentTime = 0;
+                clickSound.play();
+            }
+            updateDisplay();
+            showClickAnimation();
+        }
+
+        function buyUpgrade() {
+            if (coins >= upgradeCost) {
+                coins -= upgradeCost;
+                coinsPerSecond += 1;
+                upgradeCost = Math.floor(upgradeCost * 1.5);
+                if (soundOn) {
+                    upgradeSound.currentTime = 0;
+                    upgradeSound.play();
+                }
+                alert('🎉 Upgrade bought! Now earning ' + coinsPerSecond + ' coins/sec');
+                updateDisplay();
+            } else {
+                alert('🚫 Not enough coins!');
+            }
+        }
+
+        function toggleSound() {
+            soundOn = !soundOn;
+            alert('🔊 Sound ' + (soundOn ? 'ON' : 'OFF'));
+        }
+
+        setInterval(() => {
+            coins += coinsPerSecond;
+            updateDisplay();
+        }, 1000);
+    </script>
+</body>
+</html>
